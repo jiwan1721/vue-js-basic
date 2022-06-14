@@ -1,7 +1,7 @@
 <template>
     <div>
-        <input type="checkbox" id ="todo-item"/>
-        <label for="todo-item">{{label}}</label>
+        <input type="checkbox" id:"id" :checked="isDone"/>
+        <label :for="id">{{label}}</label>
     </div>
 </template>
 <script>
@@ -12,7 +12,8 @@ export default {
     },
     data(){
         return {
-            isDone: this.done
+            isDone: this.done,
+            id: uniqueId('todo-')
         }
     }
 };
