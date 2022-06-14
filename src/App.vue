@@ -3,10 +3,13 @@
   <!-- <Todos id="1" title="basic" completed="true"/> -->
   <h1>To-do-list</h1>
   <to-do-form @todo-added="addToDo"></to-do-form>
+  <h2 id = "list-summary">{{listSummary}}</h2>
   <ul aria-labelledby="list-summary" class="stack-large">
 
   <li v-for="item in DoneFirsts" :key="item.id">
-    <Done-First v-bind:label="item.label" v-bind:done="item.done" v-bind:id="item.id"></Done-First>
+    <Done-First v-bind:label="item.label" v-bind:done="item.done" v-bind:id="item.id"
+     @checkbox-changed = "updateDoneStatus(item.id)">
+    </Done-First>
   </li>
 </ul>
 
@@ -40,7 +43,17 @@ import ToDoForm from './components/ToDoForm.vue';
         addToDo(toDoLabel) {
           // console.log('To-do added',toDoLabel);
           this.DoneFirsts.push({id:uniqueId('todo-'), label:toDoLabel, done:false});
+        },
+        updateDoneStatus(toDoId) {
+          const toDoToUpdate = this.DoneFirsts.find(item=> item.id === toDoId)
+          toDoToUpdate.done = !toDoToUpdate.done
         }
+    },
+    computed: {
+      listSummary() {
+        const numberFinishedItems = this.DoneFirsts.filter(item=>item.done).length
+        return `${numberFinishedItems} out of ${this.DoneFirsts.length} items completed`
+      }
     }
   
   };
