@@ -3,12 +3,14 @@
   <!-- <Todos id="1" title="basic" completed="true"/> -->
   <h1>To-do-list</h1>
   <to-do-form @todo-added="addToDo"></to-do-form>
-  <h2 id = "list-summary">{{listSummary}}</h2>
+  <h2 id = "list-summary" ref="listSummary" tabindex="-1">{{listSummary}}</h2>
   <ul aria-labelledby="list-summary" class="stack-large">
 
   <li v-for="item in DoneFirsts" :key="item.id">
     <Done-First v-bind:label="item.label" v-bind:done="item.done" v-bind:id="item.id"
-     @checkbox-changed = "updateDoneStatus(item.id)">
+     @checkbox-changed = "updateDoneStatus(item.id)"
+     @item-deleted="deleteToDo(item.id)"
+     @item-edited="editToDo(item.id,$event)">
     </Done-First>
   </li>
 </ul>
@@ -38,16 +40,26 @@ import ToDoForm from './components/ToDoForm.vue';
           { id: uniqueId('todo-'), label: 'Create a to-do list', done: false }
         ]
       };
-      },
-     methods: { 
+    },
+    methods: { 
         addToDo(toDoLabel) {
           // console.log('To-do added',toDoLabel);
           this.DoneFirsts.push({id:uniqueId('todo-'), label:toDoLabel, done:false});
         },
         updateDoneStatus(toDoId) {
-          const toDoToUpdate = this.DoneFirsts.find(item=> item.id === toDoId)
-          toDoToUpdate.done = !toDoToUpdate.done
-        }
+          const toDoToUpdate = this.DoneFirsts.find(item=> item.id === toDoId);
+          toDoToUpdate.done = !toDoToUpdate.done;
+        },
+        deleteToDo(toDoId){
+          // this.$emit('item-deleted');
+          const itemIndex= this.DoneFirsts.findIndex(item=> item.id === toDoId);
+          this.DoneFirsts.splice(itemIndex,1);
+          this.$refs.listSummary.focus();
+        },
+        editToDo(toDoId, newLabel) {
+          const toDoToEdit = this.DoneFirsts.find(item => item.id === toDoId);
+          toDoToEdit.label = newLabel;
+        },
     },
     computed: {
       listSummary() {
